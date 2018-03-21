@@ -13,16 +13,15 @@ namespace BlueCopy.Controllers
   [Route("api/v1/[controller]")]
   public class ContentController : Controller
   {
-    public CloudBlobContainer BlobContainer { get; }
+    public CloudBlobClient Client { get; }
 
     public ContentController(IConfiguration conf)
     {
       var key = "ConnectionString";
       var connectionString = conf[key] ?? throw new InvalidOperationException($"{key} is not defined");
       var client = CloudStorageAccount.Parse(connectionString).CreateCloudBlobClient();
-      var container = client.GetContainerReference("000");
 
-      this.BlobContainer = container;
+      this.Client = client;
     }
 
     [HttpGet]
@@ -44,13 +43,43 @@ namespace BlueCopy.Controllers
     public async Task<IActionResult> Post(string content)
     {
       var id = GenerateNewId();
+      var id1 = id.Substring(0, 3);
+      var id2 = id.Substring(3);
 
-      var blob = BlobContainer.GetBlockBlobReference(id);
+      var container = Client.GetContainerReference(id1);
+      try
+      {
+        await UploadAsync(container, id2, content);
+      }
+      catch
+      {
+        await container.CreateAsync();
+        try
+        {
+          var permissions = await container.GetPermissionsAsync();
+          permissions.PublicAccess = BlobContainerPublicAccessType.Container;
+          await container.SetPermissionsAsync(permissions);
+        }
+        catch
+        {
+          // if failed to set permissions, delete container
+          await container.DeleteIfExistsAsync();
+
+          throw;
+        }
+
+        await UploadAsync(container, id2, content);
+      }
+
+      var url = $"https://copyblue.blob.core.windows.net/{id1}/{id2}";
+      return Redirect(url);
+    }
+
+    private async Task UploadAsync(CloudBlobContainer container, string id2, string content)
+    {
+      var blob = container.GetBlockBlobReference(id2);
       blob.Properties.ContentType = "text/html";
       await blob.UploadTextAsync(content);
-
-      var url = "https://copyblue.blob.core.windows.net/000/" + id;
-      return Redirect(url);
     }
 
     private string GenerateNewId()
