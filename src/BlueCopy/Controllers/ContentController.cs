@@ -43,8 +43,7 @@ namespace BlueCopy.Controllers
     [HttpPost]
     public async Task<IActionResult> Post(string content)
     {
-      var now = DateTime.UtcNow;
-      var id = now.ToString("yyyyMM/dd/hh/mm/ss/") + now.Ticks + ".html";
+      var id = GenerateNewId();
 
       var blob = BlobContainer.GetBlockBlobReference(id);
       blob.Properties.ContentType = "text/html";
@@ -52,6 +51,14 @@ namespace BlueCopy.Controllers
 
       var url = "https://copyblue.blob.core.windows.net/000/" + id;
       return Redirect(url);
+    }
+
+    private string GenerateNewId()
+    {
+      var now = DateTime.UtcNow;
+      var id = now.ToString("yyyyMM/dd/hh/mm/ss/") + now.Ticks + ".html";
+
+      return id;
     }
   }
 }
