@@ -56,9 +56,49 @@ namespace BlueCopy.Controllers
     private string GenerateNewId()
     {
       var now = DateTime.UtcNow;
-      var id = now.ToString("yyyyMM/dd/hh/mm/ss/") + now.Ticks + ".html";
+      var num = now.Ticks - new DateTime(2018, 3, 21).Ticks;
+      var id = ConvertLongToAnyBase(num, 36); // base36
 
       return id;
+    }
+
+    private string ConvertLongToAnyBase(long decimalNumber, ushort radix)
+    {
+      // http://www.pvladov.com/2012/05/decimal-to-arbitrary-numeral-system.html
+
+      const int BitsInLong = sizeof(long) * 8; // 64
+      const string Digits = "0123456789abcdefghijklmnopqrstuvwxyq";
+      //const string Digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      if (radix < 2 || radix > Digits.Length)
+      {
+        throw new ArgumentException($"The {nameof(radix)} must be >= 2 and <= {Digits.Length}");
+      }
+
+      if (decimalNumber == 0)
+      {
+        return "0";
+      }
+
+      var index = BitsInLong - 1;
+      var currentNumber = Math.Abs(decimalNumber);
+      var charArray = new char[BitsInLong];
+
+      while (currentNumber != 0)
+      {
+        var remainder = (int)(currentNumber % radix);
+
+        charArray[index--] = Digits[remainder];
+        currentNumber = currentNumber / radix;
+      }
+
+      var result = new String(charArray, index + 1, BitsInLong - index - 1);
+      if (decimalNumber < 0)
+      {
+        result = "-" + result;
+      }
+
+      return result;
     }
   }
 }
