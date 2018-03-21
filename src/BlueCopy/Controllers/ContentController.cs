@@ -4,13 +4,27 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace BlueCopy.Controllers
 {
   [Route("api/v1/[controller]")]
   public class ContentController : Controller
   {
+    public CloudBlobContainer BlobContainer { get; }
+
+    public ContentController(IConfiguration conf)
+    {
+      var key = "ConnectionString";
+      var connectionString = conf[key] ?? throw new InvalidOperationException($"{key} is not defined");
+      var client = CloudStorageAccount.Parse(connectionString).CreateCloudBlobClient();
+      var container = client.GetContainerReference("000");
+
+      this.BlobContainer = container;
+    }
+
     [HttpGet]
     public IActionResult Get()
     {
@@ -29,13 +43,10 @@ namespace BlueCopy.Controllers
     [HttpPost]
     public async Task<IActionResult> Post(string content)
     {
-      var cstr = "TODO";
-      var client = CloudStorageAccount.Parse(cstr).CreateCloudBlobClient();
-      var container = client.GetContainerReference("000");
       var now = DateTime.UtcNow;
       var id = now.ToString("yyyyMM/dd/hh/mm/ss/") + now.Ticks + ".html";
 
-      var blob = container.GetBlockBlobReference(id);
+      var blob = BlobContainer.GetBlockBlobReference(id);
       blob.Properties.ContentType = "text/html";
       await blob.UploadTextAsync(content);
 

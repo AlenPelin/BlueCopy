@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BlueCopy
 {
-  public class Program
+  public static class Program
   {
     public static void Main(string[] args)
     {
@@ -19,7 +19,22 @@ namespace BlueCopy
 
     public static IWebHost BuildWebHost(string[] args) =>
       WebHost.CreateDefaultBuilder(args)
+        .BuildConfiguration()
         .UseStartup<Startup>()
         .Build();
+
+    private static IWebHostBuilder BuildConfiguration(this IWebHostBuilder builder)
+    {
+      return builder.ConfigureAppConfiguration((builderContext, config) =>
+      {
+          IHostingEnvironment env = builderContext.HostingEnvironment;
+
+          config
+            .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"C:/etc/bluecopy/dev/appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"C:/etc/bluecopy/dev/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+      });
+    }
   }
 }
