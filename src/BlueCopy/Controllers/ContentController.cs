@@ -15,12 +15,18 @@ namespace BlueCopy.Controllers
   {
     public CloudBlobClient Client { get; }
 
+    public string UrlPrefix { get; }
+
     public ContentController(IConfiguration conf)
     {
+      var urlPrefixKey = "UrlPrefix";
+      var prefix = conf[urlPrefixKey] ?? throw new InvalidOperationException($"{urlPrefixKey} is not defined");
+
       var connectionStringKey = "ConnectionString";
       var connectionString = conf[connectionStringKey] ?? throw new InvalidOperationException($"{connectionStringKey} is not defined");
       var client = CloudStorageAccount.Parse(connectionString).CreateCloudBlobClient();
 
+      this.UrlPrefix = prefix.TrimEnd('/').ToLower();
       this.Client = client;
     }
 
@@ -71,7 +77,7 @@ namespace BlueCopy.Controllers
         await UploadAsync(container, id2, content);
       }
 
-      var url = $"https://copyblue.blob.core.windows.net/{id1}/{id2}";
+      var url = $"{UrlPrefix}/{id1}/{id2}";
       return Redirect(url);
     }
 
