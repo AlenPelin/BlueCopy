@@ -17,8 +17,8 @@ namespace BlueCopy.Controllers
 
     public ContentController(IConfiguration conf)
     {
-      var key = "ConnectionString";
-      var connectionString = conf[key] ?? throw new InvalidOperationException($"{key} is not defined");
+      var connectionStringKey = "ConnectionString";
+      var connectionString = conf[connectionStringKey] ?? throw new InvalidOperationException($"{connectionStringKey} is not defined");
       var client = CloudStorageAccount.Parse(connectionString).CreateCloudBlobClient();
 
       this.Client = client;
