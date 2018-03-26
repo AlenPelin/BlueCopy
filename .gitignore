@@ -1,5 +1,13 @@
+.vscode
+!.vscode/settings.json
+
+src/.vscode
+!src/.vscode/settings.json
 
 src/BlueCopy/.vscode
-
 src/BlueCopy/bin
 src/BlueCopy/obj
+
+src/BlueCopy.Core/.vscode
+src/BlueCopy.Core/bin
+src/BlueCopy.Core/obj

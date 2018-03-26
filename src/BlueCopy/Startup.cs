@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlueCopy.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,7 @@ namespace BlueCopy
     {
       services.AddCors();
       services.AddMvc();
+      services.AddSingleton(typeof(IKeyGenerator), typeof(CustomAlphabetKeyGenerator));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
