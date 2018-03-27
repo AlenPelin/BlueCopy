@@ -1,0 +1,21 @@
+{
+  "name": "copy.blue",
+  "description": "This extension extracts the content from the current page and re-publishes it on own website, giving short URL to share.",
+  "version": "1.0.0",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "icons": { "128": "128.png" },
+  "permissions": [
+    "tabs", 
+    "http://*/*", 
+    "https://*/*"
+  ],
+  "browser_action": {
+    "default_title": "Re-publish main content of page",
+    "default_icon": "16.png"
+  },
+
+  "manifest_version": 2
+}
