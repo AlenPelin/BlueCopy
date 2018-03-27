@@ -38,10 +38,15 @@ namespace BlueCopy.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(string content)
+    public async Task<IActionResult> Post(string content, bool redirect = true)
     {
       var id = KeyGenerator.GenerateNewId();
       var url = await BlobClient.UploadAsync(id[0], id[1], content);
+
+      if (!redirect)
+      {
+        return Json(url);
+      }
 
       return Redirect(url);
     }
