@@ -26,6 +26,7 @@ namespace BlueCopy
     {
       services.AddCors();
       services.AddMvc();
+      services.AddSingleton(typeof(IBlobClient), typeof(AzureBlobClient));
       services.AddSingleton(typeof(IKeyGenerator), typeof(CustomAlphabetKeyGenerator));
     }
 
