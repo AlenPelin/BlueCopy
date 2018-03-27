@@ -1,13 +1,10 @@
 .vscode
 !.vscode/settings.json
 
-src/.vscode
-!src/.vscode/settings.json
+BlueCopy/.vscode
+BlueCopy/bin
+BlueCopy/obj
 
-src/BlueCopy/.vscode
-src/BlueCopy/bin
-src/BlueCopy/obj
-
-src/BlueCopy.Core/.vscode
-src/BlueCopy.Core/bin
-src/BlueCopy.Core/obj
+BlueCopy.Core/.vscode
+BlueCopy.Core/bin
+BlueCopy.Core/obj
