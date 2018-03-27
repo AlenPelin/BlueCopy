@@ -8,8 +8,6 @@ namespace BlueCopy.Core
 {
   public class AzureBlobClient : IBlobClient
   {
-    public string UrlPrefix { get; }
-
     public CloudBlobClient Client { get; }
 
     public AzureBlobClient(IConfiguration conf)
@@ -19,18 +17,14 @@ namespace BlueCopy.Core
         throw new ArgumentNullException(nameof(conf));
       }
 
-      var urlPrefixKey = "UrlPrefix";
-      var prefix = conf[urlPrefixKey] ?? throw new InvalidOperationException($"{urlPrefixKey} is not defined");
-
       var connectionStringKey = "ConnectionString";
       var connectionString = conf[connectionStringKey] ?? throw new InvalidOperationException($"{connectionStringKey} is not defined");
       var client = CloudStorageAccount.Parse(connectionString).CreateCloudBlobClient();
 
-      this.UrlPrefix = prefix.TrimEnd('/').ToLower();
       this.Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async Task<string> UploadAsync(string containerName, string path, string content)
+    public async Task UploadAsync(string containerName, string path, string content)
     {
       var container = Client.GetContainerReference(containerName);
       try
@@ -56,8 +50,6 @@ namespace BlueCopy.Core
 
         await UploadAsync(container, path, content);
       }
-
-      return $"{UrlPrefix}/{containerName}/{path}";
     }
 
     private async Task UploadAsync(CloudBlobContainer container, string id2, string content)

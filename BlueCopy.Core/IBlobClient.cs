@@ -4,6 +4,6 @@ namespace BlueCopy.Core
 {
     public interface IBlobClient
     {
-        Task<string> UploadAsync(string id1, string id2, string content);
+        Task UploadAsync(string id1, string id2, string content);
     }
 }
