@@ -15,7 +15,7 @@ mercury.send();
 
 function mercurySuccess(data){
   var blueCopy = new XMLHttpRequest();
-  blueCopy.open('POST', 'http://localhost:5000/api/v1/content?redirect=false', true);
+  blueCopy.open('POST', 'https://copyblue.azurewebsites.net/api/v1/content?redirect=false', true);
   blueCopy.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   
   blueCopy.onreadystatechange = function() {

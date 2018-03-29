@@ -1,7 +1,7 @@
 {
   "name": "copy.blue",
   "description": "This extension extracts the content from the current page and re-publishes it on own website, giving short URL to share.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
